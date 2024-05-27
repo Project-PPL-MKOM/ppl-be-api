@@ -6,11 +6,14 @@ from utils.landmark import detect_pose_landmarks, adjust_shoulder, set_topmost_p
 from utils.response import ResponseBuilder
 from utils.ref_obj import detect_ref_obj, get_contour_length
 from utils.validator import validate_request
+import error_handler
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2 megabytes
+
+app.register_blueprint(error_handler.blueprint)
 
 
 @app.route('/')
