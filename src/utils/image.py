@@ -1,3 +1,4 @@
+import base64
 import cv2
 from werkzeug.datastructures import FileStorage
 from mediapipe.tasks.python.components.containers.landmark import NormalizedLandmark
@@ -37,3 +38,18 @@ def get_annotation(image, pose_landmark_list: list[list[NormalizedLandmark]]):
         )
 
     return annotated_image
+
+
+def resize_image(image):
+    h, w, *_ = image.shape
+    nw = 500
+    nh = int(nw * h / w)
+    resized_image = cv2.resize(image, (nw, nh))
+    return resized_image
+
+
+def encode_image(image):
+    encode_params = [int(cv2.IMWRITE_PNG_COMPRESSION), 9]
+    _, buffer = cv2.imencode('.png', image, encode_params)
+    encoded_image = base64.b64encode(buffer).decode('ascii')
+    return encoded_image

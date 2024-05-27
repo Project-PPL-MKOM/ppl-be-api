@@ -1,3 +1,4 @@
+from re import match as re_match
 from flask import request
 from magic import from_buffer
 from werkzeug.datastructures import FileStorage
@@ -17,6 +18,13 @@ def is_mime_type_allowed(file: FileStorage):
     return mime in ['image/png', 'image/jpeg', 'image/jpg']
 
 
+def is_number_regex(s):
+    """ Returns True if string is a number. """
+    if re_match("^\d+?\.\d+?$", s) is None:
+        return s.isdigit()
+    return True
+
+
 def validate_request():
     if 'photo' not in request.files:
         return ResponseBuilder.failed('Missing `photo`').json
@@ -29,7 +37,7 @@ def validate_request():
     if 'refLength' not in request.form:
         return ResponseBuilder.failed('Missing `refLength`').json
     refLength = request.form['refLength']
-    if not refLength.isnumeric():
+    if not is_number_regex(refLength):
         return ResponseBuilder.failed('refLength must be numeric').json
     refLength = float(refLength)
     if refLength <= 0:
