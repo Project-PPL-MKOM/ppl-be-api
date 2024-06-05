@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from werkzeug.serving import WSGIRequestHandler
 from flask import Flask, request
-from utils.image import decode_image, encode_image, get_annotation, resize_image
+from utils.image import decode_image, encode_image, get_annotation, resize_image, draw_contour
 from utils.landmark import detect_pose_landmarks, adjust_shoulder, set_topmost_point, get_connection_length
 from utils.response import ResponseBuilder
 from utils.ref_obj import detect_ref_obj, get_contour_length
@@ -11,7 +11,7 @@ import error_handler
 load_dotenv()
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2 megabytes
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 megabytes
 
 app.register_blueprint(error_handler.blueprint)
 
@@ -57,6 +57,7 @@ def detect():
     real_height = ref_length_cm * vec_length / ref_length
 
     annotation_image = get_annotation(image, pose_landmark_list)
+    annotation_image = draw_contour(annotation_image, ref_contour)
     resized_annotation = resize_image(annotation_image)
     encoded_annotation = encode_image(resized_annotation)
 

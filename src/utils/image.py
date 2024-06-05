@@ -40,6 +40,31 @@ def get_annotation(image, pose_landmark_list: list[list[NormalizedLandmark]]):
     return annotated_image
 
 
+def draw_contour(image, contour):
+    image_contour = image.copy()
+    # Get the four corner points of the ruler
+    rect = cv2.minAreaRect(contour)
+    box = cv2.boxPoints(rect)
+    box = np.intp(box)
+    # Draw the rectangle around the detected ruler
+    cv2.drawContours(image_contour, [box], 0, (255, 0, 0), 2)
+    # Get the width and height of the rectangle
+    width = int(rect[1][0])
+    height = int(rect[1][1])
+    # Draw a line indicating the height of the ruler
+    if width > height:
+        # Vertical ruler
+        p1 = tuple(box[1])
+        p2 = tuple(box[2])
+    else:
+        # Horizontal ruler
+        p1 = tuple(box[0])
+        p2 = tuple(box[1])
+    # Draw the height line on the image
+    cv2.line(image_contour, p1, p2, (0, 0, 255), 2)
+    return image_contour
+
+
 def resize_image(image):
     h, w, *_ = image.shape
     nw = 500

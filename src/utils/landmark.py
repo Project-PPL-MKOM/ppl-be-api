@@ -5,10 +5,12 @@ from mediapipe import Image, ImageFormat
 import numpy as np
 import os
 
+MODEL_PATH = 'pose_landmarker_heavy.task'
+
 
 def detect_pose_landmarks(image) -> list[list[NormalizedLandmark]]:
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    asset_path = os.path.join(dir_path, 'pose_landmarker.task')
+    asset_path = os.path.join(dir_path, MODEL_PATH)
     base_options = BaseOptions(model_asset_path=asset_path)
     options = PoseLandmarkerOptions(base_options=base_options)
     detector = PoseLandmarker.create_from_options(options)
